@@ -1,0 +1,24 @@
+{
+  "name": "gpt-init",
+  "version": "1.0.0",
+  "description": "A command line tool to bootstrap a new project using AI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/checkbox": "^2.1.0",
+    "@inquirer/prompts": "^4.1.0",
+    "@inquirer/select": "^2.0.0",
+    "@langchain/openai": "^0.0.14",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "langchain": "^0.1.21",
+    "openai": "^4.28.0"
+  }
+}

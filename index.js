@@ -14,20 +14,23 @@ import chalk from 'chalk';
 	const answers = await prompts()
 	
 	console.log(chalk.yellow('Parsing steps to initialize your project...'))
-	
-	// Get the steps to initialize the project
-	const steps = await getSteps(answers.ProjectType, answers.technologyStack)
-	
-	const parsedSteps = JSON.parse(steps.toString())
-	
-	parsedSteps.forEach((step, index) => {
-		console.log(chalk.green(`Step ${index + 1}: `), step)
-	})
-	
-	console.log(chalk.yellow('Executing steps...'))
-	
-	for(const step of parsedSteps){
-		console.log(chalk.green('Executing step: '), step)
-		await executeStep(step, answers.ProjectType, answers.technologyStack)
+	try {
+		// Get the steps to initialize the project
+		const steps = await getSteps(answers.ProjectType, answers.technologyStack)
+		
+		const parsedSteps = JSON.parse(steps.toString())
+		
+		parsedSteps.forEach((step, index) => {
+			console.log(chalk.green(`Step ${index + 1}: `), step)
+		})
+		
+		console.log(chalk.yellow('Executing steps...'))
+		
+		for(const step of parsedSteps){
+			console.log(chalk.green('Executing step: '), step)
+			await executeStep(step, answers.ProjectType, answers.technologyStack)
+		}
+	} catch (error) {
+		console.log(chalk.red('Error: '), error)
 	}
 } )()

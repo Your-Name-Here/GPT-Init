@@ -7,6 +7,7 @@ import OpenAI from 'openai'
 import { exec } from 'child_process'
 import chalk from 'chalk'
 import { ask } from './questions.js'
+import { Instructions } from './instructions/encode.js'
 
 const openai = new OpenAI({
 	apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
@@ -17,7 +18,8 @@ const llm = new ChatOpenAI({
 	temperature: 0.35,
 	model: 'gpt-3.5-turbo',
 })
-
+const instructions = new Instructions()
+instructions.embedInstructions()
 const JSONFormater = 'You will need to return only valid JSON and nothing else.'
 
 const SystemPrompt = (type)=>`You are a professional programmer. You need set up a new ${type} project. You need to configure the project and install the necessary dependencies. Assume npm init has been called already and do not suggest command line commands like"Initialize typescript config: tsc --init" would just be "Initialize typescript config". Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous`
@@ -222,9 +224,11 @@ export const fileTools = [
 	}
 ]
 export async function executeStep(step, type, techs){
+	// get instructions for the step
+	const customInstructions = await instructions.search(`How do I ${step}`)
 	const prompt = await executeStepTemplate.format({step, type, techs: techs.join(', ')})
 	const messages = [
-		{ role: 'system', content: SystemPrompt(type) },
+		{ role: 'system', content: SystemPrompt(type) + (customInstructions.length ? `\nAdditional instructions: ${ customInstructions.join('\n' )}` : '') },
 		{ role: 'user', content: prompt }
 	]
 	let stepInference = await openai.chat.completions.create({
